@@ -16,20 +16,26 @@ const addNewAddress = async (req, res, next) => {
         ))
     }
 
-   
 
     const userId = req.userId
 
-
-
-    const address = new Address({ userId, ...req.body });
-
     try {
+
+
         let user = await User.findById(userId)
 
         if (!user) {
             return next(new HttpError("Couldn't find user for provided id.", 404))
         }
+
+
+        let isDefault = true
+
+        if (user.address.length > 0) {
+            isDefault = false
+        }
+
+        const address = new Address({ userId, isDefault, ...req.body });
 
         const sess = await mongoose.startSession()
         sess.startTransaction()
@@ -38,16 +44,18 @@ const addNewAddress = async (req, res, next) => {
         await user.save({ session: sess })
         await sess.commitTransaction()
 
+        res.status(200).json({
+            message: "New address added successfully.",
+            address: address.toObject({ getters: true })
+        });
+
     } catch (error) {
         next(error);
     }
 
 
 
-    res.status(200).json({
-        message: "New address added successfully.",
-        address: address.toObject({ getters: true })
-    });
+
 };
 
 
@@ -121,6 +129,9 @@ const deleteAddress = async (req, res, next) => {
             return next(new HttpError("Yourn't allow to delete that address.", 401))
         }
 
+        if (findAddress.isDefault) {
+            return next(new HttpError("You can't delete default address.", 422))
+        }
 
         const sess = await mongoose.startSession()
         sess.startTransaction()
@@ -199,7 +210,7 @@ const updateIsDefault = async (req, res, next) => {
     }
 
     const addressId = req.params.addressId
-    const userId = req.userId 
+    const userId = req.userId
 
     try {
 

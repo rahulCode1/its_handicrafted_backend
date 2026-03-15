@@ -1,8 +1,11 @@
-const { default: mongoose } = require("mongoose")
+
 const { validationResult } = require("express-validator")
 const WishList = require("../model/wishlist-model")
 const Cart = require("../model/cart-model")
 const HttpError = require("../model/http-error")
+const User = require("../model/user-model")
+const mongoose = require("mongoose")
+
 
 const addOrRemoveFromWishlist = async (req, res, next) => {
 
@@ -73,9 +76,18 @@ const addOrRemoveFromWishlist = async (req, res, next) => {
 const getAllWishlistItems = async (req, res, next) => {
     const userId = req.userId
 
+
     try {
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return next(new HttpError("User not found.", 404))
+        }
+
+
         const wishlist = await WishList.findOne({ userId })
             .populate("items.product");
+
 
         res.status(200).json({
             success: true,
@@ -157,7 +169,7 @@ const clearWishlist = async (req, res, next) => {
     const userId = req.userId
 
     try {
-        const  wishlist = await WishList.findOne({ userId })
+        const wishlist = await WishList.findOne({ userId })
 
         if (!wishlist) {
             return next(new HttpError("Wishlist not found for that user.", 404))
@@ -169,7 +181,7 @@ const clearWishlist = async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Wishlist cleared.",
-            
+
         })
 
     } catch (error) {
