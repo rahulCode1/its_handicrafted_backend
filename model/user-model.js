@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         required: [true, 'Phone number is required'],
+        min: 10,
+        max: 10,
         unique: true,
         trim: true,
 

@@ -7,15 +7,18 @@ const {
     increaseQuantity,
     moveToWishlist,
     decreaseQuantity,
-    removeFromCart
+    removeFromCart,
+    clearCart
 } = require("../controller/cart-controller")
+const authCheck = require("../middleware/auth-check")
 
 
-router.post("/:userId", cartValidator, addProductToCart)
-router.get("/:userId", getAllCartItems)
-router.patch("/:userId", productIdValidator, increaseQuantity)
-router.patch("/decrease/:userId", productIdValidator, decreaseQuantity)
-router.patch("/remove/:userId", productIdValidator, removeFromCart)
-router.patch("/moveto_wishlist/:userId", productIdValidator, moveToWishlist)
+router.post("/addToCart", cartValidator, authCheck, addProductToCart)
+router.get("/getAllCart", authCheck, getAllCartItems)
+router.patch("/increase", productIdValidator, authCheck, increaseQuantity)
+router.patch("/decrease", productIdValidator, authCheck, decreaseQuantity)
+router.patch("/remove", productIdValidator, authCheck, removeFromCart)
+router.patch("/moveto_wishlist", productIdValidator, authCheck, moveToWishlist)
+router.patch("/clearCart", authCheck, clearCart)
 
 module.exports = router

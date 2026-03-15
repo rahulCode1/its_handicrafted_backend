@@ -4,6 +4,7 @@ const Cart = require("../model/cart-model")
 const Wishlist = require("../model/wishlist-model")
 const HttpError = require("../model/http-error")
 const Product = require("../model/product-model")
+const User = require("../model/user-model")
 
 const addProductToCart = async (req, res, next) => {
 
@@ -17,7 +18,7 @@ const addProductToCart = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.userId
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id to add product to cart.", 404))
@@ -84,7 +85,7 @@ const getAllCartItems = async (req, res, next) => {
     }
 
 
-    const userId = req.params.userId
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id for view user cart.", 404))
@@ -117,7 +118,7 @@ const increaseQuantity = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.userId;
+    const userId = req.userId;
 
     if (!userId) {
         return next(new HttpError("Please provide user id for increase product quantity.", 404))
@@ -164,7 +165,7 @@ const decreaseQuantity = async (req, res, next) => {
             422
         ))
     }
-    const userId = req.params.userId
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id for decrease product quantity.", 404))
@@ -173,7 +174,7 @@ const decreaseQuantity = async (req, res, next) => {
     const { productId } = req.body
 
     try {
-        const cart = await Cart.findOne({ userId: new mongoose.Types.ObjectId(userId) })
+        const cart = await Cart.findOne({ userId })
         if (!cart) {
             return next(new HttpError("Cart not found.", 404))
         }
@@ -213,7 +214,7 @@ const removeFromCart = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.userId
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id for remove product from cart.", 404))
@@ -254,7 +255,7 @@ const moveToWishlist = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.userId
+    const userId = req.userId
     if (!userId) {
         return next(new HttpError("Please provide user id for move product to wishlist.", 404))
     }
@@ -311,8 +312,36 @@ const moveToWishlist = async (req, res, next) => {
 
 }
 
+const clearCart = async (req, res, next) => {
+    try {
+        const userId = req.userId
+
+        const cart = await Cart.findOne({ userId })
+
+        if (!cart) {
+            return next(new HttpError("Cart not found for that user.", 404))
+        }
+
+        cart.items = []
+        await cart.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Cart cleared successfully.",
+            userId
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = {
-    addProductToCart, getAllCartItems, increaseQuantity,
-    decreaseQuantity, moveToWishlist, removeFromCart
+    addProductToCart,
+    getAllCartItems,
+    increaseQuantity,
+    decreaseQuantity,
+    moveToWishlist,
+    removeFromCart,
+    clearCart
 }

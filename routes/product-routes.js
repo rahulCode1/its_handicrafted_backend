@@ -7,19 +7,23 @@ const {
     addNewProduct,
     getAllProducts,
     productDetails
-    ,
-    deleteProduct
+
 } = require("../controller/product-controller")
+const authCheck = require("../middleware/auth-check")
 
 
 
 
 
+router.post("/product/add",
+    upload.array("images", 10),
+    productValidation,
+    authCheck,
+    addNewProduct
+)
 
-router.post("/product/add", upload.array("images", 10), productValidation, addNewProduct)
 router.get("/products", getAllProducts)
 router.get("/product/:productId", productIdValidation, productDetails)
-router.delete("/product/:productId", productIdValidation, deleteProduct)
 
 
 

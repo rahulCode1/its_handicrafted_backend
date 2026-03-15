@@ -16,11 +16,13 @@ const addNewAddress = async (req, res, next) => {
         ))
     }
 
-    const { userId } = req.body;
+   
+
+    const userId = req.userId
 
 
 
-    const address = new Address(req.body);
+    const address = new Address({ userId, ...req.body });
 
     try {
         let user = await User.findById(userId)
@@ -53,6 +55,8 @@ const addNewAddress = async (req, res, next) => {
 // Get user Addresses
 const getUserAddress = async (req, res, next) => {
 
+    const error = validationResult(req)
+
     if (!error.isEmpty()) {
         return next(new HttpError(
             error.array()[0].msg ||
@@ -62,7 +66,9 @@ const getUserAddress = async (req, res, next) => {
     }
 
 
-    const userId = req.params.userId
+    const userId = req.userId
+
+
 
     if (!userId) {
         return next(new HttpError("Please provide user id to find address.", 404))
@@ -85,9 +91,9 @@ const getUserAddress = async (req, res, next) => {
 
 // Delete Address
 const deleteAddress = async (req, res, next) => {
-
+    const error = validationResult(req)
     if (!error.isEmpty()) {
-        return  next(new HttpError(
+        return next(new HttpError(
             error.array()[0].msg ||
             "Address id required to delete address.",
             422
@@ -95,6 +101,7 @@ const deleteAddress = async (req, res, next) => {
     }
 
     const addressId = req.params.addressId;
+    const userId = req.userId
 
     if (!addressId) {
         return next(new HttpError("Please provide address id.", 404))
@@ -108,7 +115,12 @@ const deleteAddress = async (req, res, next) => {
             return next(new HttpError("Address not found with provided id.", 404))
         }
 
-        // Validation missing, User that create address only that delete that address.
+        const createdBy = findAddress.userId._id.toString()
+
+        if (createdBy !== userId) {
+            return next(new HttpError("Yourn't allow to delete that address.", 401))
+        }
+
 
         const sess = await mongoose.startSession()
         sess.startTransaction()
@@ -132,9 +144,9 @@ const deleteAddress = async (req, res, next) => {
 
 // Update address 
 const updateAddress = async (req, res, next) => {
-
+    const error = validationResult(req)
     if (!error.isEmpty()) {
-        return  next(new HttpError(
+        return next(new HttpError(
             error.array()[0].msg ||
             "Address id required to update address.",
             422
@@ -142,7 +154,7 @@ const updateAddress = async (req, res, next) => {
     }
 
     const addressId = req.params.addressId
-    const updateData = req.body
+    const userId = req.userId
 
     try {
         const address = await Address.findById(addressId)
@@ -151,9 +163,16 @@ const updateAddress = async (req, res, next) => {
             return next(new HttpError("No address found for update status.", 404))
         }
 
+        const createdBy = address.userId._id.toString()
+
+        if (createdBy !== userId) {
+            return next(new HttpError("Yourn't allow to update address.", 401))
+        }
+
+
         const updatedAddress = await Address.findByIdAndUpdate(
             addressId,
-            updateData,
+            { userId, ...req.body },
             { new: true }
         )
 
@@ -169,9 +188,10 @@ const updateAddress = async (req, res, next) => {
 }
 
 const updateIsDefault = async (req, res, next) => {
+    const error = validationResult(req)
 
     if (!error.isEmpty()) {
-        return next( new HttpError(
+        return next(new HttpError(
             error.array()[0].msg ||
             "Address id required to set default address.",
             422
@@ -179,6 +199,7 @@ const updateIsDefault = async (req, res, next) => {
     }
 
     const addressId = req.params.addressId
+    const userId = req.userId 
 
     try {
 
@@ -187,6 +208,13 @@ const updateIsDefault = async (req, res, next) => {
         if (!address) {
             return next(new HttpError("No address found for update status.", 404))
         }
+
+        const createdBy = address.userId._id.toString()
+
+        if (createdBy !== userId) {
+            return next(new HttpError("Yourn't allow to update address status.", 401))
+        }
+
 
         await Address.updateMany({}, { isDefault: false })
         const updatedAddressStatus = await Address.findByIdAndUpdate(addressId,
@@ -208,7 +236,7 @@ const updateIsDefault = async (req, res, next) => {
 }
 
 const findAddressById = async (req, res, next) => {
-
+    const error = validationResult(req)
     if (!error.isEmpty()) {
         return next(new HttpError(
             error.array()[0].msg ||

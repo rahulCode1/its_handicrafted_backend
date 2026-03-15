@@ -11,18 +11,18 @@ const {
     findUserOrders,
     findUserOrderDetails
 } = require("../controller/order-controller")
+const authCheck = require("../middleware/auth-check")
 
-
-router.post('/:id', orderValidation, createOrder);
-router.get('/:id', findUserOrders);
+router.post('/placeOrder', orderValidation, authCheck, createOrder);
+router.get('/getUserOrders', authCheck, findUserOrders);
 router.get(
     `/:orderId/details`,
-    orderIdValidation,
+    orderIdValidation, authCheck,
     findUserOrderDetails
 )
 router.patch(
-    "/:id/cancel",
-    orderIdValidation,
+    "/:orderId/cancel",
+    orderIdValidation, authCheck,
     cancelUserOrder
 )
 

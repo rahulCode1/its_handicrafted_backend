@@ -13,17 +13,17 @@ const {
     updateIsDefault,
     findAddressById
 } = require("../controller/address-controller")
+const authCheck = require("../middleware/auth-check")
 
 
 
 
-
-router.post("/new", addressValidation, addNewAddress)
-router.get("/:userId", getUserAddress)
-router.get("/address_info/:addressId",addressIdValidation, findAddressById)
-router.patch("/update/:addressId/default",addressIdValidation, updateIsDefault)
-router.patch("/update/:addressId", addressIdValidation,  updateAddress)
-router.delete("/:addressId", addressIdValidation, deleteAddress)
+router.post("/new", addressValidation, authCheck, addNewAddress)
+router.get("/getAllAddress", authCheck, getUserAddress)
+router.get("/address_info/:addressId", addressIdValidation, authCheck, findAddressById)
+router.patch("/update/:addressId/default", authCheck, updateIsDefault)
+router.patch("/update/:addressId", addressIdValidation, authCheck, updateAddress)
+router.delete("/:addressId", addressIdValidation, authCheck, deleteAddress)
 
 
 module.exports = router 

@@ -156,12 +156,21 @@ const verifyUser = async (req, res, next) => {
         user.expiresAt = null
         await user.save()
 
-        const token = jwt.sign({ userId: user._id }, 'superSecret', { expiresIn: '30d' })
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.SECRET_KEY,
+            { expiresIn: '30d' }
+        )
 
+        const transformUser = {
+            userId: user._id,
+            name: user.name,
+            phoneNumber: user.phoneNumber
+        }
         res.status(200).json({
             success: true,
             token,
-            user: user.toObject({ getters: true }),
+            user: transformUser,
 
         })
 
@@ -190,10 +199,36 @@ const getAllUsers = async (req, res, next) => {
     }
 };
 
+// User details
+const userDetails = async (req, res, next) => {
+    try {
+        const userId = req.userId
+
+        if (!userId) {
+            return next(new HttpError("User id not found.", 404))
+        }
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return next(new HttpError("User not found.", 404))
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "User fetch successfully.",
+            user: user.toObject({ getters: true })
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 module.exports = {
     createUser,
     getAllUsers,
     verifyUser,
-    resendOtp
+    resendOtp,
+    userDetails
 };

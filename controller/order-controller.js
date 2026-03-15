@@ -17,13 +17,14 @@ const createOrder = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.id
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id for place order.", 404))
     }
 
     const orderData = req.body;
+   
 
     const cart = await Cart.findOne({ userId })
 
@@ -46,8 +47,8 @@ const createOrder = async (req, res, next) => {
                 quantity: cart.quantity
             }))
 
-        const order = new Order({ products, ...orderData });
-        const savedOrder = await order.save();
+        const order = new Order({ products, ...orderData, orderPlacedBy: userId });
+        await order.save();
 
 
 
@@ -58,7 +59,7 @@ const createOrder = async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: "Order placed successfully.",
-            order: savedOrder
+            order: order.toObject({ getters: true })
         });
 
     } catch (error) {
@@ -69,12 +70,12 @@ const createOrder = async (req, res, next) => {
 
 const findUserOrders = async (req, res, next) => {
 
- 
-    const userId = req.params.id
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id for find user order.", 404))
     }
+
     try {
         const orders = await Order.find({
             orderPlacedBy: userId
@@ -105,7 +106,7 @@ const findUserOrders = async (req, res, next) => {
 
 const findUserOrderDetails = async (req, res, next) => {
 
-     const errors = validationResult(req)
+    const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
         return next(new HttpError(
@@ -115,7 +116,7 @@ const findUserOrderDetails = async (req, res, next) => {
         ))
     }
 
-    const { userId } = req.query
+    const userId = req.userId
     const orderId = req.params.orderId
 
     if (!userId) {
@@ -145,7 +146,7 @@ const findUserOrderDetails = async (req, res, next) => {
 }
 
 const cancelUserOrder = async (req, res, next) => {
-      const errors = validationResult(req)
+    const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
         return next(new HttpError(
@@ -161,11 +162,29 @@ const cancelUserOrder = async (req, res, next) => {
         return next(new HttpError("Please provide order id for cancel order.", 404))
     }
 
+    const userId = req.userId
+
+    if (!userId) {
+        return next(new HttpError("Please provide user id for find user order.", 404))
+    }
+
     try {
+
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return next(new HttpError("User not found with that id.", 404))
+        }
+
+
         const order = await Order.findById(orderId);
 
         if (!order) {
             return next(new HttpError(`Order doesn't exist with that id.`, 404))
+        }
+
+        if (userId !== order.orderPlacedBy.toString()) {
+            return next(new HttpError("Only owner can cancel their order.", 401))
         }
 
         order.orderStatus = 'cancelled'

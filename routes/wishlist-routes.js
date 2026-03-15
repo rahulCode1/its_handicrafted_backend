@@ -7,10 +7,11 @@ const {
     moveToCart
 } = require("../controller/wishlist-controller")
 const { wishlistValidation } = require("../middleware/wishlist-validation")
+const authCheck = require("../middleware/auth-check")
 
+router.post("/toggle", wishlistValidation,authCheck, addOrRemoveFromWishlist)
+router.get("/getAllWishlist",authCheck, getAllWishlistItems)
+router.patch("/moveToCart", wishlistValidation,authCheck, moveToCart)
 
-router.post("/:id", wishlistValidation, addOrRemoveFromWishlist)
-router.get("/:id", getAllWishlistItems)
-router.patch("/:id", wishlistValidation, moveToCart)
 
 module.exports = router

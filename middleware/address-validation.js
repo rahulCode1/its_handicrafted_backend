@@ -1,7 +1,6 @@
 const { check, param } = require("express-validator")
 const addressValidation = [
-    check("userId").trim().notEmpty().withMessage("User id required").isMongoId().withMessage("User id must be mongoose id."),
-    check("name")
+   check("name")
         .trim()
         .notEmpty().withMessage("Please provide user name.")
         .isLength({ min: 2, max: 100 }).withMessage("Name must be 2-100 characters."),
@@ -40,7 +39,7 @@ const addressValidation = [
 ]
 
 const addressIdValidation = [
-    param("userId").trim().notEmpty().withMessage("User id required").isMongoId().withMessage("User id must be mongoose id."),
+    param("addressId").trim().notEmpty().withMessage("address id required").isMongoId().withMessage("User id must be mongoose id."),
 
 ]
 

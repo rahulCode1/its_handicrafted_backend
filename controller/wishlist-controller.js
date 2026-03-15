@@ -16,7 +16,7 @@ const addOrRemoveFromWishlist = async (req, res, next) => {
     }
 
 
-    const userId = req.params.id
+    const userId = req.userId
 
     if (!userId) {
         return next(new HttpError("Please provide user id.", 404))
@@ -57,6 +57,8 @@ const addOrRemoveFromWishlist = async (req, res, next) => {
 
         }
 
+
+
         res.status(200).json({
             message,
             wishlistProduct,
@@ -69,14 +71,10 @@ const addOrRemoveFromWishlist = async (req, res, next) => {
 
 
 const getAllWishlistItems = async (req, res, next) => {
-    const userId = req.params.id
-
-    if (!userId) {
-        return next(new HttpError("Please provide user id.", 404))
-    }
+    const userId = req.userId
 
     try {
-        const wishlist = await WishList.findOne({ userId: new mongoose.Types.ObjectId(userId) })
+        const wishlist = await WishList.findOne({ userId })
             .populate("items.product");
 
         res.status(200).json({
@@ -102,7 +100,8 @@ const moveToCart = async (req, res, next) => {
         ))
     }
 
-    const userId = req.params.id
+    const userId = req.userId
+
     if (!userId) {
         return next(new HttpError("Please provide user  id.", 404))
     }
@@ -112,6 +111,7 @@ const moveToCart = async (req, res, next) => {
 
     try {
         let wishlist = await WishList.findOne({ userId })
+
         if (!wishlist) {
             return next(new HttpError("Wishlist not found for that user.", 404))
         }
@@ -152,4 +152,34 @@ const moveToCart = async (req, res, next) => {
     }
 }
 
-module.exports = { addOrRemoveFromWishlist, getAllWishlistItems, moveToCart }
+const clearWishlist = async (req, res, next) => {
+
+    const userId = req.userId
+
+    try {
+        const  wishlist = await WishList.findOne({ userId })
+
+        if (!wishlist) {
+            return next(new HttpError("Wishlist not found for that user.", 404))
+        }
+
+        wishlist.items = []
+        await wishlist.save()
+
+        res.status(200).json({
+            success: true,
+            message: "Wishlist cleared.",
+            
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = {
+    addOrRemoveFromWishlist,
+    getAllWishlistItems,
+    moveToCart,
+    clearWishlist
+}
