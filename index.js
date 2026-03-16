@@ -17,13 +17,13 @@ initializeDb()
 
 
 
-
-app.use(cors({
+const corsOptions = {
     origin: ["http://localhost:3000", "https://itshandicrafted-frontend.vercel.app"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
-}));
-
+}
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions))
 
 app.use(express.json())
 
