@@ -15,16 +15,30 @@ const HttpError = require("./model/http-error")
 
 initializeDb()
 
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', "*")
+//     res.setHeader(
+//         "Access-Control-Allow-Headers",
+//         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//     );
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+
+//     if (req.method === "OPTIONS") {
+//         return res.sendStatus(200)
+//     }
+//     next()
+// });
 
 
-const corsOptions = {
-    origin: ["http://localhost:3000", "https://itshandicrafted-frontend.vercel.app"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+
+app.use(cors({
+    origin: [
+        "http://localhost:3000",
+        "https://itshandicrafted-frontend.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true
-}
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions))
-
+}));
 app.use(express.json())
 
 app.use("/api/user", userRouter)
