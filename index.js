@@ -15,19 +15,26 @@ const HttpError = require("./model/http-error")
 
 initializeDb()
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', "*")
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', "*")
+//     res.setHeader(
+//         "Access-Control-Allow-Headers",
+//         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//     );
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
 
-    if (req.method === "OPTIONS") {
-        return res.sendStatus(200)
-    }
-    next()
-});
+//     if (req.method === "OPTIONS") {
+//         return res.sendStatus(200)
+//     }
+//     next()
+// });
+
+
+app.use(cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 
 
 app.use(express.json())
