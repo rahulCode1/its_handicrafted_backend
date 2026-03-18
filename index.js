@@ -11,7 +11,7 @@ const userRouter = require("./routes/user-routes")
 const cartRouter = require("./routes/cart-routes")
 const wishlistRouter = require("./routes/wishlist-routes")
 const HttpError = require("./model/http-error")
-
+const razorpayRouter = require("./routes/razorpay-routes")
 
 initializeDb()
 
@@ -50,7 +50,9 @@ app.use((req, res, next) => {
 
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
+app.use("/api/payment", razorpayRouter)
 app.use("/api/user", userRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/wishlist", wishlistRouter)
@@ -60,16 +62,16 @@ app.use("/api/order", orderRouter)
 
 
 app.use((req, res, next) => {
-    const error = new HttpError("Route not found.", 404)
-    next(error)
+  const error = new HttpError("Route not found.", 404)
+  next(error)
 })
 
 
 app.use((error, req, res, next) => {
-    if (res.headerSent) {
-        return next(error)
-    }
-    res.status(error.code || 500).json({ message: error.message || "Something went wrong." })
+  if (res.headerSent) {
+    return next(error)
+  }
+  res.status(error.code || 500).json({ message: error.message || "Something went wrong." })
 })
 
 
@@ -77,5 +79,5 @@ app.use((error, req, res, next) => {
 const PORT = process.env.PORT
 
 app.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`)
+  console.log(`Server running on ${PORT}`)
 })

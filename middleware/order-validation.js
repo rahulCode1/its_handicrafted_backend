@@ -38,6 +38,10 @@ const orderIdValidation = [
     .isMongoId().withMessage("Order id must be mongoose id.")
 ]
 
+const addToBuyNowValidation = [
+    
+]
+
 module.exports = {
     orderValidation,
     orderIdValidation

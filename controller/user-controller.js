@@ -52,7 +52,8 @@ const createUser = async (req, res, next) => {
 
         res.status(200).json({
             message: "Otp sent successfully.",
-            otp
+            otp,
+            user
         });
     } catch (error) {
         next(error);
@@ -157,7 +158,7 @@ const verifyUser = async (req, res, next) => {
         await user.save()
 
         const token = jwt.sign(
-            { userId: user._id },
+            { userId: user._id, phoneNumber },
             process.env.SECRET_KEY,
             { expiresIn: '30d' }
         )
@@ -207,11 +208,15 @@ const userDetails = async (req, res, next) => {
         if (!userId) {
             return next(new HttpError("User id not found.", 404))
         }
+        
         const user = await User.findById(userId)
+
+        // console.log(user)
 
         if (!user) {
             return next(new HttpError("User not found.", 404))
         }
+
 
         res.status(201).json({
             success: true,

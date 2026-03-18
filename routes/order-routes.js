@@ -9,22 +9,23 @@ const {
     createOrder,
     cancelUserOrder,
     findUserOrders,
-    findUserOrderDetails
+    findUserOrderDetails,
+    createPaymentOrder,
+    verifyPayment,
+    addItemTobuyNow,
+    getBuyNowItem,
+    placeOrderViaBuyNow
 } = require("../controller/order-controller")
 const authCheck = require("../middleware/auth-check")
 
 router.post('/placeOrder', orderValidation, authCheck, createOrder);
 router.get('/getUserOrders', authCheck, findUserOrders);
-router.get(
-    `/:orderId/details`,
-    orderIdValidation, authCheck,
-    findUserOrderDetails
-)
-router.patch(
-    "/:orderId/cancel",
-    orderIdValidation, authCheck,
-    cancelUserOrder
-)
-
+router.get(`/:orderId/details`, orderIdValidation, authCheck, findUserOrderDetails)
+router.get("/getBuyNowItem", authCheck, getBuyNowItem)
+router.patch("/:orderId/cancel", orderIdValidation, authCheck, cancelUserOrder)
+router.post("/create-order", createPaymentOrder)
+router.post("/verify-payment", verifyPayment)
+router.post("/addItemToBuyNow", authCheck, addItemTobuyNow)
+router.post("/placeOrderViaBuyNow", authCheck, placeOrderViaBuyNow)
 
 module.exports = router 

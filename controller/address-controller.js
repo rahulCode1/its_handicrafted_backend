@@ -21,11 +21,10 @@ const addNewAddress = async (req, res, next) => {
 
     try {
 
-
         let user = await User.findById(userId)
 
         if (!user) {
-            return next(new HttpError("Couldn't find user for provided id.", 404))
+            return next(new HttpError("User not found.", 404))
         }
 
 
@@ -84,6 +83,10 @@ const getUserAddress = async (req, res, next) => {
 
     try {
         const userWithAddress = await User.findById(userId).populate("address").sort({ createdAt: -1 })
+
+        if (userWithAddress.address.length === 0) {
+            return next(new HttpError("You havn't address, Please add an address.", 404))
+        }
 
         res.status(200).json({
             success: true,
