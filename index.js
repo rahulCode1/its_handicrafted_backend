@@ -16,7 +16,7 @@ const razorpayRouter = require("./routes/razorpay-routes")
 initializeDb()
 
 
-
+app.use(cors())
 const allowedOrigins = [
   "http://localhost:3000",
   "https://itshandicrafted-frontend.vercel.app"
