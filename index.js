@@ -1,4 +1,6 @@
 require("dotenv").config()
+require("dotenv").config({path: "./test.env"})
+
 const express = require("express")
 const app = express()
 const cors = require("cors")
@@ -71,7 +73,7 @@ app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error)
   }
-  res.status(error.code || 500).json({ message: error.message || "Something went wrong." })
+  res.status(error.errorCode || 500).json({ message: error.message || "Something went wrong." })
 })
 
 

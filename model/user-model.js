@@ -17,16 +17,12 @@ const userSchema = new mongoose.Schema({
         trim: true,
 
     },
-    otp: {
-        type: Number,
-    },
+
 
     resentOtpTime: {
         type: Date,
     },
-    expiresAt: {
-        type: Date,
-    },
+  
 
 
     orders: [{ type: mongoose.Types.ObjectId, ref: "Order" }],
