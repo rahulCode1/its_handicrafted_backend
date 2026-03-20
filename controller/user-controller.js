@@ -84,7 +84,7 @@ const verifyUser = async (req, res, next) => {
                 phoneNumber,
                 address,
                 orders,
-                resentOtpTime: Date.now() + 0.1 * 60 * 1000
+                resentOtpTime: Date.now() + 0.3 * 60 * 1000
             })
         }
 
