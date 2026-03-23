@@ -7,7 +7,7 @@ const authCheck = require("../middleware/auth-check")
 
 
 router.post('/send-otp', sendOtpValidation, sendOtp);
-router.patch('/verify-otp', otpValidation, verifyUser)
+router.post('/verify-otp', otpValidation, verifyUser)
 router.get('/', getAllUsers);
 router.get("/userDetails", authCheck, userDetails)
 

@@ -75,7 +75,7 @@ const addOrRemoveFromWishlist = async (req, res, next) => {
 const getAllWishlistItems = async (req, res, next) => {
     const userId = req.userId
 
-    // console.log(userId)
+  
     try {
         const user = await User.findById(userId)
 
@@ -87,7 +87,7 @@ const getAllWishlistItems = async (req, res, next) => {
         const wishlist = await WishList.findOne({ userId })
             .populate("items.product");
 
-            // console.log(wishlist)
+           
 
         if (!wishlist) {
             return next(new HttpError("You haven't any item in wishlist.", 404))

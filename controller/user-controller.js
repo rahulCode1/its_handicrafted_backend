@@ -24,6 +24,8 @@ const sendOtp = async (req, res, next) => {
         channel: "sms",
       });
 
+   
+
     res.status(200).json({
       message: "Otp sent successfully.",
     });
@@ -44,6 +46,8 @@ const verifyUser = async (req, res, next) => {
 
   const { name, otp, phoneNumber } = req.body;
 
+ 
+
   try {
     const verificationCheck = await client.verify.v2
       .services(process.env.TWILIO_SERVICE_SID)
@@ -59,11 +63,11 @@ const verifyUser = async (req, res, next) => {
     let user = await User.findOne({ phoneNumber });
 
     if (!user) {
-      new User({
+      user = new User({
         name,
         phoneNumber,
-        address,
-        orders,
+        address: [],
+        orders: [],
         resentOtpTime: Date.now() + 0.3 * 60 * 1000,
       });
     }
@@ -81,12 +85,14 @@ const verifyUser = async (req, res, next) => {
       name: user.name,
       phoneNumber: user.phoneNumber,
     };
+
     res.status(200).json({
       success: true,
       token,
       user: transformUser,
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
