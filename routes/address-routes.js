@@ -7,7 +7,7 @@ const {
 } = require("../middleware/address-validation")
 const {
     addNewAddress,
-    getUserAddress,
+    getAllAddress,
     deleteAddress,
     updateAddress,
     updateIsDefault,
@@ -19,7 +19,7 @@ const authCheck = require("../middleware/auth-check")
 
 
 router.post("/new", addressValidation, authCheck, addNewAddress)
-router.get("/getAllAddress", authCheck, getUserAddress)
+router.get("/getAllAddress", authCheck, getAllAddress)
 router.get("/address_info/:addressId", addressIdValidation, authCheck, findAddressById)
 router.patch("/update/:addressId/default", authCheck, updateIsDefault)
 router.patch("/update/:addressId", addressIdValidation, authCheck, updateAddress)

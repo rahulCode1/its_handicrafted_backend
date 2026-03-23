@@ -87,6 +87,7 @@ const getAllCartItems = async (req, res, next) => {
     const carts = await Cart.findOne({ userId })
       .populate("items.product")
       .sort({ createdAt: -1 });
+      
 
     if (!carts) {
       return next(new HttpError("You haven't add any item in cart."), 404);
