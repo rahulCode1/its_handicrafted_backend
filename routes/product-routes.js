@@ -17,7 +17,7 @@ const authCheck = require("../middleware/auth-check")
 
 router.post("/product/add",
     upload.array("images", 10),
-    productValidation,
+  
     authCheck,
     addNewProduct
 )
