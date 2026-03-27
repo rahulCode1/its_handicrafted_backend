@@ -48,6 +48,7 @@ const productModel = new mongoose.Schema(
         "StatuesIdols",
         "HomeDecor",
         "KitchenDining",
+        "SilBatta",
         "GardenOutdoor",
         "CorporateGifts",
         "ReligiousItems",
