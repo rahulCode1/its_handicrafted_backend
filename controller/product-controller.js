@@ -13,7 +13,7 @@ const addNewProduct = async (req, res, next) => {
 
   const { care } = req.body;
 
-  console.log(req.body)
+  console.log(req.body);
 
   if (!req.files || req.files.length === 0) {
     return next(new HttpError("No image uploaded.", 400));
@@ -110,4 +110,41 @@ const productDetails = async (req, res, next) => {
   }
 };
 
-module.exports = { addNewProduct, getAllProducts, productDetails };
+const updateProducts = async (req, res, next) => {
+  try {
+    const productId = req.params.productId;
+    const userId = req.userId;
+    let product = await Product.findById(productId);
+
+    if (!product) {
+      return next(new HttpError("Product not found.", 404));
+    }
+
+    
+
+    if (product.createdBy.toString() !== userId) {
+      return next(new HttpError("Only owner can update product.", 403));
+    }
+
+    await Product.findByIdAndUpdate({ _id: productId }, req.body, {
+      new: true,
+    });
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully.",
+      product: product.toObject({ getters: true }),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  addNewProduct,
+  getAllProducts,
+  productDetails,
+  updateProducts,
+};
