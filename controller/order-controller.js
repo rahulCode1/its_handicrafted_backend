@@ -19,8 +19,6 @@ const createOrder = async (req, res, next) => {
 
   const userId = req.userId;
 
- 
-
   const { summary, address, paymentMethod } = req.body;
 
   if (!userId) {
@@ -49,7 +47,6 @@ const createOrder = async (req, res, next) => {
         quantity: item.quantity,
       }),
     );
-
 
     if (paymentMethod === "ONLINE") {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
@@ -330,7 +327,7 @@ const getBuyNowItem = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Buy now item find successfully.",
-      item: buyNowItem,
+      item: buyNowItem.toObject({ getters: true }),
     });
   } catch (error) {
     next(error);
@@ -426,7 +423,7 @@ const placeOrderViaBuyNow = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Order placed successfully.",
-      order: order._id,
+      orderId: order._id,
     });
   } catch (error) {
     next(error);
