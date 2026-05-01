@@ -329,7 +329,7 @@ const getBuyNowItem = async (req, res, next) => {
     }
 
 
-    console.log(buyNowItem)
+   
 
     res.status(200).json({
       success: true,
@@ -362,7 +362,7 @@ const placeOrderViaBuyNow = async (req, res, next) => {
 
     let item = await BuyNow.findOne({ user });
 
-    console.log(item)
+    
 
     if (!item) {
       return next(new HttpError("Item not found to place order.", 404));
