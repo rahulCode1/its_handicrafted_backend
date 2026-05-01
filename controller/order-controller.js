@@ -324,6 +324,10 @@ const getBuyNowItem = async (req, res, next) => {
     const user = req.userId;
     const buyNowItem = await BuyNow.findOne({ user }).populate("product");
 
+    if (!buyNowItem) {
+      return next(new HttpError("Item not found", 404));
+    }
+
     res.status(200).json({
       success: true,
       message: "Buy now item find successfully.",
