@@ -17,12 +17,12 @@ const sendOtp = async (req, res, next) => {
   const { phoneNumber } = req.body;
 
   try {
-    // await client.verify.v2
-    //   .services(process.env.TWILIO_SERVICE_SID)
-    //   .verifications.create({
-    //     to: `+91${phoneNumber}`,
-    //     channel: "sms",
-    //   });
+    await client.verify.v2
+      .services(process.env.TWILIO_SERVICE_SID)
+      .verifications.create({
+        to: `+91${phoneNumber}`,
+        channel: "sms",
+      });
 
    
 
@@ -49,16 +49,16 @@ const verifyUser = async (req, res, next) => {
  
 
   try {
-    // const verificationCheck = await client.verify.v2
-    //   .services(process.env.TWILIO_SERVICE_SID)
-    //   .verificationChecks.create({
-    //     to: `+91${phoneNumber}`,
-    //     code: otp,
-    //   });
+    const verificationCheck = await client.verify.v2
+      .services(process.env.TWILIO_SERVICE_SID)
+      .verificationChecks.create({
+        to: `+91${phoneNumber}`,
+        code: otp,
+      });
 
-    // if (verificationCheck.status !== "approved") {
-    //   return next(new HttpError("Invalid otp", 400));
-    // }
+    if (verificationCheck.status !== "approved") {
+      return next(new HttpError("Invalid otp", 400));
+    }
 
     let user = await User.findOne({ phoneNumber });
 
