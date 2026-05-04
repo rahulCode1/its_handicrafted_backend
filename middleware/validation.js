@@ -83,6 +83,7 @@ const productValidation = [
       "Alabaster",
       "SlateStone",
       "QuartzStone",
+      "Marble Dust"
     ])
     .withMessage("Invalid material type."),
 
@@ -120,6 +121,7 @@ const productValidation = [
       "PaperWeights",
       "LuxuryDecor",
       "GiftSets",
+      "Idols & Murtis"
     ])
     .withMessage("Invalid category."),
   check("metaTitle")

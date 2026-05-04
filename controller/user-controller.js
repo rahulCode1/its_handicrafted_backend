@@ -129,7 +129,7 @@ const userDetails = async (req, res, next) => {
 
     const user = await User.findById(userId);
 
-    // console.log(user)
+    
 
     if (!user) {
       return next(new HttpError("User not found.", 404));

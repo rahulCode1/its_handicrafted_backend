@@ -328,9 +328,6 @@ const getBuyNowItem = async (req, res, next) => {
       return next(new HttpError("Item not found", 404));
     }
 
-
-   
-
     res.status(200).json({
       success: true,
       message: "Buy now item find successfully.",
@@ -361,8 +358,6 @@ const placeOrderViaBuyNow = async (req, res, next) => {
     }
 
     let item = await BuyNow.findOne({ user });
-
-    
 
     if (!item) {
       return next(new HttpError("Item not found to place order.", 404));
@@ -435,6 +430,37 @@ const placeOrderViaBuyNow = async (req, res, next) => {
   }
 };
 
+const getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find()
+      .populate("products.product")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    
+
+    const transformedOrder = orders.map((order) => ({
+      ...order,
+      id: order._id,
+      products: order.products.map((product) => ({
+        ...product.product,
+        quantity: product.quantity,
+        id: product._id,
+      })),
+    }));
+
+ 
+
+    res.status(200).json({
+      success: true,
+      message: "All orders fetch successfully.",
+      orders: transformedOrder,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createOrder,
   cancelUserOrder,
@@ -445,4 +471,5 @@ module.exports = {
   addItemTobuyNow,
   getBuyNowItem,
   placeOrderViaBuyNow,
+  getAllOrders,
 };
