@@ -13,7 +13,7 @@ const userRouter = require("./routes/user-routes");
 const cartRouter = require("./routes/cart-routes");
 const wishlistRouter = require("./routes/wishlist-routes");
 const HttpError = require("./model/http-error");
-const razorpayRouter = require("./routes/razorpay-routes");
+
 
 initializeDb();
 
@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/payment", razorpayRouter);
+
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishlistRouter);
