@@ -59,7 +59,7 @@ const createOrder = async (req, res, next) => {
       const body = razorpay_order_id + "|" + razorpay_payment_id;
 
       const expectedSignature = crypto
-        .createHmac("sha256", "81Ydi7RmIgJxE3yD10Brr2Hz")
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body)
         .digest("hex");
 
@@ -266,7 +266,7 @@ const verifyPayment = async (req, res, next) => {
 
   try {
     const expectedSignature = crypto
-      .createHmac("sha256", "81Ydi7RmIgJxE3yD10Brr2Hz")
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
@@ -374,7 +374,7 @@ const placeOrderViaBuyNow = async (req, res, next) => {
       const body = razorpay_order_id + "|" + razorpay_payment_id;
 
       const expectedSignature = crypto
-        .createHmac("sha256", "81Ydi7RmIgJxE3yD10Brr2Hz")
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
         .update(body)
         .digest("hex");
 
