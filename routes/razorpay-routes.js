@@ -4,7 +4,7 @@ const { createOrder, paymentVarification, razorpayKey } = require("../controller
 
 router.get("/getKey", razorpayKey)
 router.post("/create-order", createOrder)
-router.post("/paymentVarification", paymentVarification)
+router.post("/verify-payment", paymentVarification)
 
 
 module.exports = router 
