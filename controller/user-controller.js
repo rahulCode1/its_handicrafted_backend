@@ -24,8 +24,6 @@ const sendOtp = async (req, res, next) => {
         channel: "sms",
       });
 
-   
-
     res.status(200).json({
       message: "Otp sent successfully.",
     });
@@ -45,8 +43,6 @@ const verifyUser = async (req, res, next) => {
   }
 
   const { name, otp, phoneNumber } = req.body;
-
- 
 
   try {
     const verificationCheck = await client.verify.v2
@@ -128,8 +124,6 @@ const userDetails = async (req, res, next) => {
     }
 
     const user = await User.findById(userId);
-
-    
 
     if (!user) {
       return next(new HttpError("User not found.", 404));

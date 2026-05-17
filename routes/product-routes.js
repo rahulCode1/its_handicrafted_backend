@@ -11,6 +11,9 @@ const {
   getAllProducts,
   productDetails,
   updateProducts,
+  similarProduct,
+  addUserReview,
+  getAllProductReviews,
 } = require("../controller/product-controller");
 const authCheck = require("../middleware/auth-check");
 
@@ -22,7 +25,20 @@ router.post(
 );
 
 router.get("/products", getAllProducts);
+router.get(
+  "/products/:productId/reviews",
+ 
+  getAllProductReviews,
+);
 router.get("/product/:productId", productIdValidation, productDetails);
+router.get("/product/:productId/similar", productIdValidation, similarProduct);
 router.patch("/product/:productId", authCheck, updateProducts);
+router.post(
+  "/product/:productId/review",
+  upload.array("images", 2),
+  authCheck,
+  addUserReview,
+);
+
 
 module.exports = router;
