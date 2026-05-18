@@ -258,6 +258,14 @@ const getAllProductReviews = async (req, res, next) => {
     next(error);
   }
 };
+
+const addProductVideo = async (req, res, next) => {
+  try {
+    
+  } catch (err) {
+    console.log(err);
+  }
+};
 module.exports = {
   addNewProduct,
   getAllProducts,
